@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выставочный планшет: RIFTED ROUTINE (ВКР)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vkr-dark': '#0a0a0c',
+                        'vkr-red': '#dc2626',
+                        'vkr-gray': '#a1a1aa',
+                        'vkr-panel': '#121214',
+                        'vkr-border': '#3f3f46'
+                    },
+                    fontFamily: {
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                        'display': ['"Oswald"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            color: #a1a1aa;
+        }
+
+        /* Основной контейнер 5:7 */
+        .artboard {
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 5 / 7;
+            background-color: #0a0a0c;
+            position: relative;
+            box-shadow: 0 0 50px rgba(220, 38, 38, 0.05), 0 20px 40px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        /* Эффекты: Шум и Сканлайны */
+        .fx-noise {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .fx-scanlines {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Структурная сетка */
+        .board-layout {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-rows: 15fr 28fr 37fr 20fr;
+            gap: 1.5rem;
+            height: 100%;
+            padding: 2.5rem;
+        }
+
+        /* Скошенные углы (Chamfered box) */
+        .clip-box-outer {
+            clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
+            background-color: #3f3f46;
+            padding: 1px;
+            position: relative;
+        }
+        .clip-box-inner {
+            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+            background-color: #121214;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Красный акцент для технических блоков */
+        .tech-accent::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 20px; height: 2px;
+            background-color: #dc2626;
+            z-index: 20;
+        }
+
+        /* Декоративный фон-сетка для плейсхолдеров */
+        .bg-grid {
+            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(to right, rgba(63, 63, 70, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(63, 63, 70, 0.2) 1px, transparent 1px);
+        }
+
+        /* Статичный глитч для печати */
+        .static-glitch {
+            text-shadow: 2px 0 0 #dc2626, -2px 0 0 #0ea5e9;
+        }
+
+        /* Декоративные перекрестия */
+        .crosshair { position: absolute; width: 10px; height: 10px; border-color: #3f3f46; border-style: solid; z-index: 5; }
+        .ch-tl { top: 1rem; left: 1rem; border-width: 1px 0 0 1px; }
+        .ch-tr { top: 1rem; right: 1rem; border-width: 1px 1px 0 0; }
+        .ch-bl { bottom: 1rem; left: 1rem; border-width: 0 0 1px 1px; }
+        .ch-br { bottom: 1rem; right: 1rem; border-width: 0 1px 1px 0; }
+    </style>
+</head>
+<body>
+
+    <!-- АРТ-БОРД 1000x1400 (5:7) -->
+    <div class="artboard">
+        <!-- Фоны -->
+        <div class="fx-noise"></div>
+        <div class="fx-scanlines"></div>
+
+        <!-- Перекрестия по углам -->
+        <div class="crosshair ch-tl"></div>
+        <div class="crosshair ch-tr"></div>
+        <div class="crosshair ch-bl"></div>
+        <div class="crosshair ch-br"></div>
+
+        <!-- ОСНОВНАЯ СЕТКА КОНТЕНТА -->
+        <div class="board-layout">
+
+            <!-- 1. HEADER (15%) -->
+            <header class="flex justify-between items-start gap-6">
+                <!-- Заголовок -->
+                <div class="flex-1 flex flex-col justify-center h-full">
+                    <div class="inline-block bg-vkr-red text-white font-mono text-[10px] px-2 py-1 mb-3 w-max tracking-widest uppercase">
+                        sys.doc // vkr_asset_pack
+                    </div>
+                    <h1 class="font-display text-7xl font-bold text-zinc-100 uppercase leading-[0.8] mb-2 tracking-tighter">
+                        Rifted <span class="text-zinc-100 static-glitch cursor-default">Routine</span>
+                    </h1>
+                    <h2 class="font-mono text-sm text-vkr-red tracking-widest uppercase mb-4">
+                        PS1 Low-Poly Horror Asset Pack
+                    </h2>
+                    <p class="font-mono text-xs text-vkr-gray border-l-2 border-vkr-border pl-3 max-w-lg leading-relaxed">
+                        Аномалия «Разлом». Перцептивная нестабильность предметной среды. Анатомия искажения повседневности через 3 стадии деформации.
+                    </p>
+                </div>
+
+                <!-- Академические данные -->
+                <div class="clip-box-outer tech-accent w-80 h-full">
+                    <div class="clip-box-inner p-4 bg-vkr-dark relative">
+                        <div class="font-mono text-xs text-vkr-red border-b border-vkr-border pb-2 mb-3 flex justify-between font-bold">
+                            <span>АКАДЕМИЧЕСКИЕ ДАННЫЕ</span>
+                            <span>[DAT.01]</span>
+                        </div>
+                        <ul class="font-mono text-xs text-zinc-400 space-y-2.5">
+                            <li class="flex flex-col"><span class="text-zinc-600">ТИП:</span> <span class="text-zinc-100">Выпускная квалификационная работа</span></li>
+                            <li class="flex flex-col"><span class="text-zinc-600">ТЕМА:</span> <span class="text-zinc-100">Разработка пака 3D-ассетов для хоррор-игры</span></li>
+                            <li class="flex flex-col"><span class="text-zinc-600">КАФЕДРА:</span> <span class="text-zinc-100">Дизайна и архитектуры</span></li>
+                            <li class="grid grid-cols-2 gap-2 pt-2 border-t border-vkr-border/50">
+                                <div class="flex flex-col"><span class="text-zinc-600">РУКОВОДИТЕЛЬ:</span> <span class="text-white font-bold">Кондрашов В.Ю.</span></div>
+                                <div class="flex flex-col"><span class="text-zinc-600">СТУДЕНТ:</span> <span class="text-vkr-red font-bold">Фукшанский Д.В.</span></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+
+            <!-- 2. HERO-SHOT (28%) -->
+            <section class="clip-box-outer tech-accent w-full h-full relative">
+                <div class="clip-box-inner relative overflow-hidden bg-vkr-dark bg-grid flex items-center justify-center">
+                    
+                    <!-- Слой с картинкой (вставить URL сюда) -->
+                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+
+                    <!-- Интерфейс камеры/записи -->
+                    <div class="absolute top-4 left-4 flex items-center gap-2 z-20">
+                        <div class="w-2 h-2 rounded-full bg-vkr-red"></div>
+                        <span class="font-mono text-[10px] text-vkr-red tracking-widest">REC</span>
+                    </div>
+                    
+                    <!-- Техническая плашка снизу -->
+                    <div class="absolute bottom-4 left-4 bg-black/90 border border-vkr-border backdrop-blur-none p-3 z-20">
+                        <p class="font-mono text-vkr-red text-xs font-bold mb-1">SCENE_01: RIFT_ACTIVE.SCN</p>
+                        <p class="font-mono text-zinc-400 text-[10px] tracking-wide">Демонстрация интеграции пропсов в игровое окружение</p>
+                    </div>
+
+                    <div class="absolute bottom-4 right-4 font-mono text-[10px] text-zinc-500 z-20 bg-black/80 px-2 py-1">
+                        RES: 640x480 // FPS: 24
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- 3. ANATOMY OF TRANSFORMATION (37%) -->
+            <section class="clip-box-outer w-full h-full">
+                <div class="clip-box-inner flex flex-col bg-vkr-dark justify-between">
+                    
+                    <!-- Верхняя часть с контентом (с отступами) -->
+                    <div class="p-5 pb-0 flex flex-col flex-1">
+                        <!-- Заголовок секции -->
+                        <div class="border-b border-vkr-border pb-2 mb-3 shrink-0">
+                            <h3 class="font-display text-xl text-zinc-200 tracking-wider uppercase flex items-baseline gap-3">
+                                Анатомия искажения 
+                                <span class="font-mono text-[10px] text-vkr-red/80 tracking-widest uppercase">[ Выборка: 3 из 8 объектов ]</span>
+                            </h3>
+                        </div>
+
+                        <!-- Заголовки колонок (Строго по сетке) -->
+                        <div class="grid grid-cols-[80px_1fr_1fr_1fr] gap-3 mb-2 shrink-0">
+                            <div></div> <!-- Пустое место над боковыми плашками OBJ -->
+                            <div class="text-center font-mono text-[10px] uppercase font-bold text-zinc-400 tracking-widest">Stage 1: Норма</div>
+                            <div class="text-center font-mono text-[10px] uppercase font-bold text-orange-500 tracking-widest">Stage 2: Нарушение</div>
+                            <div class="text-center font-mono text-[10px] uppercase font-bold text-red-500 tracking-widest">Stage 3: Разлом</div>
+                        </div>
+
+                        <!-- Сетка трансформаций -->
+                        <div class="flex-1 grid grid-rows-3 gap-3">
+                            
+                            <!-- Ряд 1: Стул -->
+                            <div class="grid grid-cols-[80px_1fr_1fr_1fr] gap-3">
+                                <div class="bg-vkr-panel border border-vkr-border/50 flex items-center justify-center relative overflow-hidden">
+                                    <span class="font-mono text-[10px] text-zinc-500 -rotate-90 tracking-widest absolute whitespace-nowrap">OBJ // СТУЛ</span>
+                                </div>
+                                <!-- Stage 1 (Серый) -->
+                                <div class="bg-vkr-panel border border-zinc-600 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-50 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-zinc-400 relative z-20 bg-black/80 px-2 py-0.5 border border-zinc-600/50">STAT: NORM</span>
+                                </div>
+                                <!-- Stage 2 (Оранжевый) -->
+                                <div class="bg-vkr-panel border border-orange-700/50 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-50 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-orange-500 relative z-20 bg-black/80 px-2 py-0.5 border border-orange-700/50">STAT: WARN</span>
+                                </div>
+                                <!-- Stage 3 (Красный) -->
+                                <div class="bg-vkr-panel border border-red-600/50 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-20 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-red-500 relative z-20 bg-black/80 px-2 py-0.5 border border-red-600/50">STAT: CRIT</span>
+                                </div>
+                            </div>
+
+                            <!-- Ряд 2: Телевизор -->
+                            <div class="grid grid-cols-[80px_1fr_1fr_1fr] gap-3">
+                                <div class="bg-vkr-panel border border-vkr-border/50 flex items-center justify-center relative overflow-hidden">
+                                    <span class="font-mono text-[10px] text-zinc-500 -rotate-90 tracking-widest absolute whitespace-nowrap">OBJ // ТВ</span>
+                                </div>
+                                <!-- Stage 1 (Серый) -->
+                                <div class="bg-vkr-panel border border-zinc-600 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-50 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-zinc-400 relative z-20 bg-black/80 px-2 py-0.5 border border-zinc-600/50">STAT: NORM</span>
+                                </div>
+                                <!-- Stage 2 (Оранжевый) -->
+                                <div class="bg-vkr-panel border border-orange-700/50 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-50 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-orange-500 relative z-20 bg-black/80 px-2 py-0.5 border border-orange-700/50">STAT: WARN</span>
+                                </div>
+                                <!-- Stage 3 (Красный) -->
+                                <div class="bg-vkr-panel border border-red-600/50 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-20 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-red-500 relative z-20 bg-black/80 px-2 py-0.5 border border-red-600/50">STAT: CRIT</span>
+                                </div>
+                            </div>
+
+                            <!-- Ряд 3: Дверь -->
+                            <div class="grid grid-cols-[80px_1fr_1fr_1fr] gap-3">
+                                <div class="bg-vkr-panel border border-vkr-border/50 flex items-center justify-center relative overflow-hidden">
+                                    <span class="font-mono text-[10px] text-zinc-500 -rotate-90 tracking-widest absolute whitespace-nowrap">OBJ // ДВЕРЬ</span>
+                                </div>
+                                <!-- Stage 1 (Серый) -->
+                                <div class="bg-vkr-panel border border-zinc-600 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-50 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-zinc-400 relative z-20 bg-black/80 px-2 py-0.5 border border-zinc-600/50">STAT: NORM</span>
+                                </div>
+                                <!-- Stage 2 (Оранжевый) -->
+                                <div class="bg-vkr-panel border border-orange-700/50 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-50 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-orange-500 relative z-20 bg-black/80 px-2 py-0.5 border border-orange-700/50">STAT: WARN</span>
+                                </div>
+                                <!-- Stage 3 (Красный) -->
+                                <div class="bg-vkr-panel border border-red-600/50 relative flex justify-center items-center">
+                                    <div class="bg-grid absolute inset-0 opacity-20 z-0"></div>
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                    <span class="font-mono text-[10px] text-red-500 relative z-20 bg-black/80 px-2 py-0.5 border border-red-600/50">STAT: CRIT</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <!-- Системный статус-бар (Прибит к низу, на всю ширину) -->
+                    <div class="w-full bg-black/80 border-t border-vkr-border py-1.5 mt-4 shrink-0 flex justify-center items-center">
+                        <span class="font-mono text-[9px] text-zinc-500 uppercase tracking-widest">
+                            Полная система включает: Стол, Торшер, Зеркало, Часы, Ключ (см. Asset_Grid.lib)
+                        </span>
+                    </div>
+                    
+                </div>
+            </section>
+
+
+            <!-- 4. ENGINE INTEGRATION (20%) -->
+            <section class="grid grid-cols-12 gap-6 h-full">
+                
+                <!-- Витрина всех моделей (Левая колонка) -->
+                <div class="col-span-5 clip-box-outer tech-accent h-full">
+                    <div class="clip-box-inner p-3 flex flex-col bg-vkr-dark">
+                        <h3 class="font-mono text-[10px] text-zinc-400 mb-2 uppercase flex justify-between">
+                            <span>Asset_Grid.lib</span>
+                            <span class="text-zinc-600">[24 MODELS]</span>
+                        </h3>
+                        <div class="flex-1 border border-vkr-border relative flex items-center justify-center overflow-hidden bg-vkr-panel">
+                            <div class="bg-grid absolute inset-0 z-0"></div>
+                            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                            <!-- Текст поверх витрины (удали его, когда вставишь картинку, если он будет мешать) -->
+                            <span class="font-mono text-[10px] text-zinc-300 relative z-20 text-center px-4 bg-black/80 py-2 border border-vkr-border/50">
+                                <br>
+                                <span class="text-[8px] text-zinc-500 mt-1 block">8 Props × 3 Stages</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unity Data (Правая колонка) -->
+                <div class="col-span-7 clip-box-outer h-full">
+                    <div class="clip-box-inner p-3 flex flex-col bg-vkr-dark">
+                        <h3 class="font-mono text-[10px] text-zinc-400 mb-2 uppercase flex justify-between">
+                            <span>Engine_Integration.sys</span>
+                            <span class="text-zinc-600">UNITY 3D</span>
+                        </h3>
+                        <div class="flex-1 flex gap-2">
+                            
+                            <!-- Wireframe -->
+                            <div class="flex-1 border border-vkr-border relative flex items-center justify-center bg-vkr-panel">
+                                <div class="bg-grid absolute inset-0 opacity-20 z-0"></div>
+                                <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                <div class="absolute bottom-1 left-1 bg-black/90 px-1 font-mono text-[8px] text-vkr-gray border border-vkr-border/50 z-20">TOPOLOGY</div>
+                            </div>
+                            
+                            <!-- Colliders -->
+                            <div class="flex-1 border border-vkr-border relative flex items-center justify-center bg-vkr-panel">
+                                <div class="bg-grid absolute inset-0 opacity-20 z-0"></div>
+                                <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                <div class="absolute bottom-1 left-1 bg-black/90 px-1 font-mono text-[8px] text-vkr-gray border border-vkr-border/50 z-20">PHYSICS</div>
+                            </div>
+
+                            <!-- Prefabs -->
+                            <div class="flex-1 border border-vkr-border relative flex items-center justify-center bg-vkr-panel">
+                                <div class="bg-grid absolute inset-0 opacity-20 z-0"></div>
+                                <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-10" style="background-image: url('');"></div>
+                                <div class="absolute bottom-1 left-1 bg-black/90 px-1 font-mono text-[8px] text-vkr-gray border border-vkr-border/50 z-20">ASSEMBLY</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </div>
+
+</body>
+</html>
